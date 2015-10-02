@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dropwizard-core.version>0.8.4</dropwizard-core.version>
         <halbuilder-standard.version>4.0.1</halbuilder-standard.version>
-        <maven-shade-plugin.mainClass>com.vnadgir.hal.api.HalApplication</maven-shade-plugin.mainClass>
+        <maven-shade-plugin.mainClass>com.vnadgir.hal.HalApplication</maven-shade-plugin.mainClass>
     </properties>
 
     <dependencies>

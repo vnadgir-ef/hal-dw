@@ -30,9 +30,6 @@ public class TestSessionsClientResource {
                 .get(String.class);
 
         ReadableRepresentation representation = new StandardRepresentationFactory().readRepresentation(HalMediaType.APPLICATION_HAL_JSON, new StringReader(string));
-        String ordersLinkUrl = representation.getLinkByRel("next").getHref();
-        return ok(ordersLinkUrl).build();
+        return ok("Done").build();
     }
-
-
 }

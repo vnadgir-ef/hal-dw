@@ -1,4 +1,4 @@
-package com.vnadgir.hal.api;
+package com.vnadgir.hal;
 
 import io.dropwizard.Configuration;
 

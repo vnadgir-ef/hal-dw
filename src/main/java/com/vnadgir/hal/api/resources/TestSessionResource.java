@@ -1,35 +1,54 @@
 package com.vnadgir.hal.api.resources;
 
 import com.google.common.base.Optional;
-import com.theoryinpractise.halbuilder.api.Representation;
+import com.theoryinpractise.halbuilder.api.RepresentationFactory;
 import com.vnadgir.hal.api.HalMediaType;
 import com.vnadgir.hal.api.model.TestSession;
-import com.vnadgir.hal.api.representations.TestSessionRepresentation;
+import com.vnadgir.hal.api.model.pagination.PaginatedResourceList;
+import io.dropwizard.jersey.params.DateTimeParam;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import java.util.UUID;
+import java.net.URISyntaxException;
 
 import static javax.ws.rs.core.Response.ok;
 
 @Path("/test-sessions")
 public class TestSessionResource {
 
+    private final TestSessionsService testSessionsService;
+    private final RepresentationFactory representationFactory;
+
+    public TestSessionResource(TestSessionsService testSessionsService, RepresentationFactory representationFactory) {
+        this.testSessionsService = testSessionsService;
+        this.representationFactory = representationFactory;
+    }
 
     @GET
-    public Response getTestSessions(@QueryParam("from") String from, @QueryParam("to") String to, @QueryParam("userId") String userId, @Context HttpHeaders httpHeaders){
+    @Produces("application/json")
+    public Response getTestSessions(@QueryParam("fromDate") DateTimeParam from,
+                                    @QueryParam("toDate") DateTimeParam to,
+                                    @QueryParam("offset") int offset,
+                                    @QueryParam("limit") int limit,
+                                    @Context HttpHeaders httpHeaders) throws URISyntaxException {
+
+        PaginatedResourceList<TestSession> sessions = testSessionsService.getTestSessions(new TestSessionSearchBoundsParams());
+
         MediaType acceptedMediaType = getAcceptedMediaType(httpHeaders);
-        TestSession session = new TestSession(UUID.randomUUID().toString());
-        Representation representation = new TestSessionRepresentation().get(session);
-        return ok(representation.toString(acceptedMediaType.toString())).build();
+        return getRepresentation(sessions, acceptedMediaType);
     }
+
+    private Response getRepresentation(PaginatedResourceList<TestSession> pagination, MediaType acceptedMediaType) throws URISyntaxException {
+        return ok(pagination).build();
+    }
+
 
     private MediaType getAcceptedMediaType(HttpHeaders httpHeaders) {
         Optional<MediaType> accepted = Optional.absent();
