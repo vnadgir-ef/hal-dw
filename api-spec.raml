@@ -1,0 +1,108 @@
+#%RAML 0.8
+title: "Test sessions report"
+baseUri: http://api.athena.englishtown.com/api/{version}
+version: v1
+traits:
+  - paged:
+      queryParameters:
+        limit:
+          default: 200
+          description: The number of records to return in each page
+          type: integer
+        offset:
+          default: 0
+          description: The offset within the date range to start the current page
+          type: integer
+/test-sessions:
+  is: [ paged ]
+  get:
+    description: Get the Test Sessions in order of their finish/start times
+    queryParameters:
+      from:
+        default: 01-01-2000T00:00:00.000Z
+        description: The startTime for the test sessions in UTC
+        type: date
+      to:
+        default: 01-01-2000T00:00:00.000Z
+        description: The end of the period over which we are interested in finding all the test sessions
+        type: date
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "_self": "/test-sessions?from=01-01-2014&to01-08-2014&offset=1&limit=2",
+                "next": "/test-sessions?from=01-01-2014&to01-08-2014&offset=3&limit=2",
+                "testSessions": [
+                    {
+                        "detailedScore": {
+                            "cefrLevel": "C1",
+                            "detailedScore": {
+                                "GRAMMAR": 789,
+                                "LISTENING": 129,
+                                "READING": 870
+                            },
+                            "testScore": 100
+                        },
+                        "id": "50481906-b974-486c-b9e1-d2782059e943",
+                        "personalDetails": {
+                            "city": "London",
+                            "country": "United Kingdom",
+                            "dateOfBirth": "1977-10-02",
+                            "email": "john.doe@ef.com",
+                            "firstname": "John",
+                            "gender": "MALE",
+                            "lastname": "Doe",
+                            "phone": "1234567890",
+                            "testEndDateTime": "2015-10-02T13:06:52.323Z"
+                        },
+                        "testName": "CLDS201509HBC"
+                    },
+                    {
+                        "detailedScore": {
+                            "cefrLevel": "B2",
+                            "detailedScore": {
+                                "GRAMMAR": 123,
+                                "LISTENING": 456,
+                                "READING": 789
+                            },
+                            "testScore": 120
+                        },
+                        "id": "50481906-b974-486c-b9e1-d2782059e872",
+                        "personalDetails": {
+                            "city": "Shanghai",
+                            "country": "People's Republic Of China",
+                            "dateOfBirth": "1990-01-05",
+                            "email": "jane.doe@anon.com",
+                            "firstname": "Jane",
+                            "gender": "FEMALE",
+                            "lastname": "Doe",
+                            "phone": "3334445556",
+                            "testEndDateTime": "2015-08-01T13:06:52.323Z"
+                        },
+                        "testName": "CLDS201509HBC"
+                    }
+                ]
+              }
+      503:
+        body:
+          application/json:
+            example: |
+              {
+                "message": "Unable to complete the request as downstream services are offline"
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "message": "The resource you are trying to access does not exist"
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "message": "from and to dates are necessary query parameters"
+              }
